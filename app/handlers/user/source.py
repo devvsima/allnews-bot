@@ -3,7 +3,6 @@ from aiogram.dispatcher.filters import Command, Text
 
 from loader import dp, bot, _
 
-from data.config import DIR
 from app.keyboards.inline.source import source_ikb, update_sources_ikb
 from database.models import Users
 
@@ -36,7 +35,7 @@ async def update_sources(callback: types.CallbackQuery):
                                 text="Виберіть джерела новин:",
                                 reply_markup=update_sources_ikb(user))
     
-@dp.callback_query_handler(lambda c: c.data == "save_sources")
+@dp.callback_query_handler(Text("save_sources"))
 async def save_sources(callback: types.CallbackQuery):
     await bot.edit_message_text(chat_id=callback.message.chat.id,
                                 message_id=callback.message.message_id,
