@@ -5,6 +5,9 @@ from loader import bot
 async def set_default_commands():
     commands = [
         BotCommand('/start', 'start bot'),
+        BotCommand('/source', 'start bot'),
+        BotCommand('/interest', 'start bot'),
+        BotCommand('/news', 'start bot'),
         BotCommand('/help', 'how it works?'),
         BotCommand('/lang', 'change language'),
         BotCommand('/settings', 'open bot settings'),

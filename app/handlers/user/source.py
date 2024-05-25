@@ -39,5 +39,5 @@ async def update_sources(callback: types.CallbackQuery):
 async def save_sources(callback: types.CallbackQuery):
     await bot.edit_message_text(chat_id=callback.message.chat.id,
                                 message_id=callback.message.message_id,
-                                text="Ваш вибір збережено. Використовуйте команду /interests щоб обрати інтереси.",
+                                text="Ваш вибір збережено. Використовуйте команду /news для отримання новин або натисніть кнопку'🌐 Джерела'.",
                                 reply_markup=None)

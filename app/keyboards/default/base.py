@@ -13,6 +13,8 @@ def base_kb():
             [
                 KeyboardButton(text="🌐 Джерела"),
                 KeyboardButton(text="✏️ Інтереси"),
+            ],
+            [
                 KeyboardButton(text="📰 Новини"),
             ],
         ],
