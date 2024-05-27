@@ -1,4 +1,11 @@
-Technologies stack used: peewee, aiogram2.25, postgresql
+# News bot that takes news from many sources at once
+
+Technologies stack used: 
+    peewee, 
+    aiogram==2.25
+    feedparser
+
+
 
 <hr>
 
