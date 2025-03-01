@@ -1,17 +1,29 @@
-from typing import Any, Optional, Tuple
-from aiogram.contrib.middlewares.i18n import I18nMiddleware
-from aiogram import types
-from data.config import I18N_DOMAIN, DIR
+"""
+- Собираем все текста с проекта
+pybabel extract --input-dirs=. -o data/locales/bot.pot --project=bot
 
-async def get_lang(user_id):
-    return None
+- Создаем файлы с переводами на разные языки
+pybabel init -i data/locales/bot.pot -d data/locales -D bot -l en
+pybabel init -i data/locales/bot.pot -d data/locales -D bot -l ru
+pybabel init -i data/locales/bot.pot -d data/locales -D bot -l uk
 
-class ACLMidlleware(I18nMiddleware):
-    async def get_user_locale(self, action: str, args: Tuple[Any]) -> str:
-        user = types.User.get_current()
-        return await get_lang(user.id) or user.locale
+- После того как все текста переведены, нужно скомпилировать все переводы
+pybabel compile -d data/locales -D bot --statistics
 
-def setup_middleware(dp):
-    i18n = ACLMidlleware(I18N_DOMAIN, DIR)
-    dp.middleware.setup(i18n)
-    return i18n
+pybabel update -i data/locales/bot.pot -d data/locales -D bot
+
+"""
+
+from aiogram.types import Update
+from aiogram.utils.i18n import I18nMiddleware
+
+from loader import i18n
+
+
+class MyI18nMiddleware(I18nMiddleware):
+    async def get_locale(self, event: Update, data: dict) -> str:
+        user = data.get("user")
+        return user.language if user else await super().get_locale(event, data)
+
+
+i18n_middleware = MyI18nMiddleware(i18n)

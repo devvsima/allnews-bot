@@ -1,23 +1,22 @@
-from aiogram.types import (
-    ReplyKeyboardMarkup,
-    KeyboardButton,
-    ReplyKeyboardRemove,
-)
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+
 from loader import _
 
+from .kb_generator import simple_kb_generator as gen
 
-def base_kb():
+del_kb = ReplyKeyboardRemove()
+
+example_simple_kb = gen(["example"])
+
+
+def example_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(
         resize_keyboard=True,
         keyboard=[
             [
-                KeyboardButton(text="🌐 Джерела"),
-                KeyboardButton(text="✏️ Інтереси"),
-            ],
-            [
-                KeyboardButton(text="📰 Новини"),
+                KeyboardButton(text=("example")),
             ],
         ],
+        one_time_keyboard=True,
     )
     return kb
-

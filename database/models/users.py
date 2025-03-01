@@ -1,11 +1,14 @@
-from peewee import TextField, IntegerField
-from ..connect import db, BaseModel
+from sqlalchemy import BigInteger, Boolean, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from .base import BaseModel
 
 
-class Users(BaseModel):
-    user_id = IntegerField(unique=True)
-    interests = TextField(null=True)
-    sources = TextField(null=True)  # Хранение источников в виде строки
-    message_id = IntegerField(null=True)  # Хранение ID последнего сообщения
+class UserModel(BaseModel):
+    __tablename__ = "users"
 
-db.create_tables([Users])
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    username: Mapped[str] = mapped_column(String, nullable=True)
+    language: Mapped[str] = mapped_column(String, default="en")
+    referral: Mapped[int] = mapped_column(Integer, default=0)
+    is_banned: Mapped[bool] = mapped_column(Boolean, default=False)

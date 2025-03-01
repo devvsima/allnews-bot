@@ -1,13 +1,28 @@
-from aiogram import Bot
-from aiogram.dispatcher import Dispatcher
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram import Bot, Dispatcher
+from aiogram.client.bot import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.utils.i18n import I18n
 
-from data.config import token_api
-from app.middlewares.i18n import setup_middleware
+from data.config import BOT_TOKEN, I18N_DOMAIN, LOCALES_DIR, redis
+from utils.logging import logger
 
-storage = MemoryStorage()
-bot = Bot(token_api, parse_mode="html")
+if redis.URL:
+    from aiogram.fsm.storage.redis import RedisStorage
+    from redis.asyncio.client import Redis
+
+    storage = RedisStorage(Redis.from_url(redis.URL))
+    logger.info("Storage: Redis")
+elif not redis.URL:
+    from aiogram.fsm.storage.memory import MemoryStorage
+
+    storage = MemoryStorage()
+    logger.info("Storage: Default")
+
+bot = Bot(
+    token=BOT_TOKEN,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+)
 dp = Dispatcher(bot=bot, storage=storage)
 
-i18n = setup_middleware(dp)
+i18n = I18n(path=LOCALES_DIR, domain=I18N_DOMAIN)
 _ = i18n.gettext

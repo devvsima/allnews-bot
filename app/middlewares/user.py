@@ -1,30 +1,23 @@
-from aiogram.dispatcher.handler import CancelHandler
-from aiogram.dispatcher.middlewares import BaseMiddleware
-from aiogram.types import Message, CallbackQuery, InlineQuery
+from typing import Any, Callable
 
-from database.service.users import get_or_create_user
+from aiogram import BaseMiddleware
+from aiogram.types import CallbackQuery, Message
+
+from database.services import User
 
 
 class UsersMiddleware(BaseMiddleware):
-    @staticmethod
-    async def on_process_message(message: Message, data: dict[str]):
-        if 'channel_post' in message or message.chat.type != 'private':
-            raise CancelHandler()
-
-        await message.answer_chat_action('typing')
-
-        user = message.from_user
-
-        data['user'] = get_or_create_user(user.id, user.username, user.language_code)
-
-    @staticmethod
-    async def on_process_callback_query(callback_query: CallbackQuery, data: dict[str]):
-        user = callback_query.from_user
-
-        data['user'] = get_or_create_user(user.id, user.username, user.language_code)
-
-    @staticmethod
-    async def on_process_inline_query(inline_query: InlineQuery, data: dict[str]):
-        user = inline_query.from_user
-
-        data['user'] = get_or_create_user(user.id, user.username, user.language_code)
+    async def __call__(
+        self, handler: Callable, message: Message | CallbackQuery, data: dict
+    ) -> Any:
+        session = data["session"]
+        user, is_create = await User.get_or_create(
+            session,
+            user_id=message.from_user.id,
+            username=message.from_user.username,
+            language=message.from_user.language_code,
+        )
+        if not user.is_banned:
+            data["user"] = user
+            return await handler(message, data)
+        return
